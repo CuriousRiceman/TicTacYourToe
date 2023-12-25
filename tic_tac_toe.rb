@@ -20,7 +20,7 @@ class Board
         display
     end
 
-    def check_board()
+    def check_board(current_player, turn)
         win = [
             [0, 1, 2],  # Top row
             [3, 4, 5],  # Middle row
@@ -30,15 +30,20 @@ class Board
             [2, 5, 8],  # Right column
             [0, 4, 8],  # Diagonal from top-left to bottom-right
             [2, 4, 6]   # Diagonal from top-right to bottom-left
-            ]
+        ]
 
         win.each do |combo|
             if board[combo[0]] == board[combo[1]] && board[combo[1]] == board[combo[2]]
+                puts "#{current_player} wins!"
                 return true
-            else
-                return false
             end
         end
+        
+        if turn == 8
+            puts "It's a tie!"
+        end
+
+        false
     end
 end
 
@@ -95,19 +100,28 @@ class Game
             position = player.make_moves
             if (1..9).cover?(position)
                 board.update_board(current_player, position, symbol)
+                win_or_naw = board.check_board(current_player, turn)
+                if win_or_naw == true
+                    break
+                end
             else
                 puts "Invalid input! Please enter a number between 1 and 9."
                 position = player.make_moves
             end
-
         end
+        play_again?
+    end
 
-        if board.check_board == false
+    def play_again?()
+        print "Do you want to play again? (yes/no): "
+        response = gets.chomp.downcase
+        if response == "yes"
             play()
         else
-            puts current_player + " wins!"
+            puts "Thanks for playing!"
         end
-    end 
+    end
+
 end
 
 game = Game.new
